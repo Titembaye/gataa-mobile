@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'features/prices/prices_screen.dart';
 
 void main() {
   runApp(const GataaApp());
@@ -14,19 +15,7 @@ class GataaApp extends StatelessWidget {
       title: 'Gataa',
       debugShowCheckedModeBanner: false,
       theme: GataaTheme.light,
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'Gataa',
-            style: TextStyle(
-              fontFamily: 'DM Sans',
-              fontSize: 26,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF0F2540),
-            ),
-          ),
-        ),
-      ),
+      home: const PricesScreen(),
     );
   }
 }
