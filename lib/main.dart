@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'features/prices/prices_screen.dart';
+//import 'features/prices/prices_screen.dart';
+import 'shared/widgets/main_navigation.dart';
 
 void main() {
   runApp(const GataaApp());
@@ -15,7 +16,7 @@ class GataaApp extends StatelessWidget {
       title: 'Gataa',
       debugShowCheckedModeBanner: false,
       theme: GataaTheme.light,
-      home: const PricesScreen(),
+      home: const MainNavigation(),
     );
   }
 }
