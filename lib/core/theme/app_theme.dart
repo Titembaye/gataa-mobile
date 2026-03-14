@@ -35,6 +35,18 @@ abstract class GataaColors {
   static const Color markerAlert   = Color(0xFFA63228);
 }
 
+// ─── Niveau de prix des marqueurs ─────────────────────────────────────────────
+
+enum MarkerLevel { normal, high, alert }
+
+Color markerColor(MarkerLevel level) {
+  switch (level) {
+    case MarkerLevel.normal: return GataaColors.markerNormal;
+    case MarkerLevel.high:   return GataaColors.markerHigh;
+    case MarkerLevel.alert:  return GataaColors.markerAlert;
+  }
+}
+
 // ─── Espacement ───────────────────────────────────────────────────────────────
 
 abstract class GataaSpacing {

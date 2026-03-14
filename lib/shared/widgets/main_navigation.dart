@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/prices/prices_screen.dart';
 import '../../features/submit/submit_screen.dart';
+import '../../features/map/map_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -15,7 +16,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> _screens = const [
     PricesScreen(),
-    _PlaceholderScreen(label: 'Carte'),
+    MapScreen(),
     SubmitScreen(),
   ];
 
