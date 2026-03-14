@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_theme.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SubmitScreen extends StatefulWidget {
   const SubmitScreen({super.key});
@@ -19,6 +20,9 @@ class _SubmitScreenState extends State<SubmitScreen> {
   String? _selectedUnit;
   bool _isSubmitting = false;
   bool _submitted = false;
+  double? _latitude;
+  double? _longitude;
+  bool _isLocating = false;
 
   // Données fictives — à remplacer par l'API
   final Map<String, List<String>> _productsByCategory = {
@@ -49,6 +53,58 @@ class _SubmitScreenState extends State<SubmitScreen> {
   void dispose() {
     _priceController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getLocation() async {
+    setState(() => _isLocating = true);
+
+    try {
+      // Vérifier si le service GPS est activé
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showError('Activez le GPS sur votre téléphone.');
+        return;
+      }
+
+      // Vérifier permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showError('Permission de localisation refusée.');
+          return;
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        _showError('Activez la localisation dans les paramètres.');
+        return;
+      }
+
+      // Obtenir position
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+      });
+    } catch (e) {
+      _showError('Impossible d\'obtenir la position.');
+    } finally {
+      setState(() => _isLocating = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GataaTypo.bodySmall.copyWith(color: Colors.white)),
+        backgroundColor: GataaColors.danger,
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -142,6 +198,48 @@ class _SubmitScreenState extends State<SubmitScreen> {
               items: _markets,
               onChanged: (val) => setState(() => _selectedMarket = val),
               validator: (v) => v == null ? 'Choisissez un marché' : null,
+            ),
+
+            const SizedBox(height: GataaSpacing.md),
+            GataaCard(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('POSITION GPS', style: GataaTypo.labelSmall),
+                        const SizedBox(height: GataaSpacing.xs),
+                        Text(
+                          _latitude != null
+                              ? '${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}'
+                              : 'Non détectée',
+                          style: GataaTypo.bodyMedium.copyWith(
+                            color: _latitude != null
+                                ? GataaColors.success
+                                : GataaColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: GataaSpacing.md),
+                  ElevatedButton.icon(
+                    onPressed: _isLocating ? null : _getLocation,
+                    icon: _isLocating
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: GataaColors.textOnDark,
+                            ),
+                          )
+                        : const Icon(Icons.my_location, size: 16),
+                    label: Text(_isLocating ? 'Localisation...' : 'Me localiser'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: GataaSpacing.lg),
 
