@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../core/theme/app_theme.dart';
+import 'market_detail_screen.dart';
 import 'dart:ui' as ui;
 
 class MapScreen extends StatefulWidget {
@@ -230,10 +231,7 @@ class _MarketCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      market.city.toUpperCase(),
-                      style: GataaTypo.labelSmall,
-                    ),
+                    Text(market.city.toUpperCase(), style: GataaTypo.labelSmall),
                     const SizedBox(height: GataaSpacing.xs),
                     Text(market.name, style: GataaTypo.titleMedium),
                   ],
@@ -241,11 +239,7 @@ class _MarketCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: onClose,
-                child: const Icon(
-                  Icons.close,
-                  size: 18,
-                  color: GataaColors.textMuted,
-                ),
+                child: const Icon(Icons.close, size: 18, color: GataaColors.textMuted),
               ),
             ],
           ),
@@ -258,10 +252,7 @@ class _MarketCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'PRODUIT LE PLUS SUIVI',
-                      style: GataaTypo.labelSmall,
-                    ),
+                    Text('PRODUIT LE PLUS SUIVI', style: GataaTypo.labelSmall),
                     const SizedBox(height: GataaSpacing.xs),
                     Text(market.topProduct, style: GataaTypo.bodyMedium),
                   ],
@@ -277,10 +268,7 @@ class _MarketCard extends StatelessWidget {
                           text: market.topPrice.toStringAsFixed(0),
                           style: GataaTypo.priceDisplay.copyWith(fontSize: 22),
                         ),
-                        TextSpan(
-                          text: ' FCFA',
-                          style: GataaTypo.labelMedium,
-                        ),
+                        TextSpan(text: ' FCFA', style: GataaTypo.labelMedium),
                       ],
                     ),
                   ),
@@ -290,6 +278,24 @@ class _MarketCard extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+          const SizedBox(height: GataaSpacing.md),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => MarketDetailScreen(
+                      marketName: market.name,
+                      city: market.city,
+                      prices: MarketDetailScreen.mockPricesForMarket(market.name),
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Voir tous les prix'),
+            ),
           ),
         ],
       ),
