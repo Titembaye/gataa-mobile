@@ -3,6 +3,7 @@ import '../../core/theme/app_theme.dart';
 import '../../features/prices/prices_screen.dart';
 import '../../features/submit/submit_screen.dart';
 import '../../features/map/map_screen.dart';
+import '../../features/auth/profile_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -18,6 +19,7 @@ class _MainNavigationState extends State<MainNavigation> {
     PricesScreen(),
     MapScreen(),
     SubmitScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -42,6 +44,11 @@ class _MainNavigationState extends State<MainNavigation> {
             icon: Icon(Icons.add_circle_outline),
             activeIcon: Icon(Icons.add_circle),
             label: 'Soumettre',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profil',
           ),
         ],
       ),

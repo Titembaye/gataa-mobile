@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
-//import 'features/prices/prices_screen.dart';
-//import 'shared/widgets/main_navigation.dart';
+import 'features/auth/auth_service.dart';
 import 'features/splash/splash_screen.dart';
 
-void main() {
-  runApp(const GataaApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final authService = AuthService();
+  await authService.init();
+  
+  runApp(
+    ChangeNotifierProvider.value(
+      value: authService,
+      child: const GataaApp(),
+    ),
+  );
 }
 
 class GataaApp extends StatelessWidget {
