@@ -79,6 +79,9 @@ class PricesScreen extends StatefulWidget {
 class _PricesScreenState extends State<PricesScreen> {
   String _selectedCategory = 'Tous';
 
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   List<String> get _categories {
     final cats = _mockPrices.map((p) => p.categoryName).toSet().toList();
     cats.sort();
@@ -86,10 +89,24 @@ class _PricesScreenState extends State<PricesScreen> {
   }
 
   List<PriceModel> get _filtered {
-    if (_selectedCategory == 'Tous') return _mockPrices;
-    return _mockPrices
-        .where((p) => p.categoryName == _selectedCategory)
-        .toList();
+    List<PriceModel> result = _selectedCategory == 'Tous'
+        ? _mockPrices
+        : _mockPrices.where((p) => p.categoryName == _selectedCategory).toList();
+
+    if (_searchQuery.isNotEmpty) {
+      result = result.where((p) =>
+        p.productName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+        p.marketName.toLowerCase().contains(_searchQuery.toLowerCase())
+      ).toList();
+    }
+
+    return result;
+  }
+  
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -100,9 +117,47 @@ class _PricesScreenState extends State<PricesScreen> {
       ),
       body: Column(
         children: [
+          _buildSearchBar(),
           _buildCategoryFilter(),
           Expanded(child: _buildPriceList()),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      color: GataaColors.white,
+      padding: const EdgeInsets.fromLTRB(
+        GataaSpacing.lg,
+        GataaSpacing.md,
+        GataaSpacing.lg,
+        0,
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (val) => setState(() => _searchQuery = val),
+        decoration: InputDecoration(
+          hintText: 'Rechercher un produit ou marché…',
+          prefixIcon: const Icon(
+            Icons.search,
+            size: 20,
+            color: GataaColors.textMuted,
+          ),
+          suffixIcon: _searchQuery.isNotEmpty
+              ? GestureDetector(
+                  onTap: () => setState(() {
+                    _searchQuery = '';
+                    _searchController.clear();
+                  }),
+                  child: const Icon(
+                    Icons.close,
+                    size: 18,
+                    color: GataaColors.textMuted,
+                  ),
+                )
+              : null,
+        ),
       ),
     );
   }
